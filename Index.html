@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T20 Random Team Generator - Create Balanced Cricket Teams Instantly</title>
+    <meta name="description" content="Free T20 cricket team generator. Randomly split players into balanced teams for your cricket matches. Perfect for street cricket, tournaments, and practice sessions.">
+    <meta name="keywords" content="T20 team generator, cricket team randomizer, random cricket teams, split cricket players, cricket team maker">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pitch-green: #2d5016;
+            --stadium-dark: #0a1612;
+            --boundary-white: #f5f5dc;
+            --accent-gold: #ffd700;
+            --shadow-deep: rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            background: linear-gradient(135deg, var(--stadium-dark) 0%, #1a2f23 100%);
+            color: var(--boundary-white);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(196, 30, 58, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -40%;
+            left: -15%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 71, 171, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 15s ease-in-out infinite reverse;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-50px, 50px) rotate(180deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: clamp(3rem, 8vw, 6rem);
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #ffed4e 50%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            margin-bottom: 10px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: var(--boundary-white);
+            opacity: 0.8;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .input-section {
+            background: rgba(45, 80, 22, 0.3);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 60px var(--shadow-deep);
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            font-family: 'Bebas Neue', cursive;
+            letter-spacing: 1px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: 20px;
+            font-size: 1rem;
+            font-family: 'Barlow', sans-serif;
+            background: rgba(10, 22, 18, 0.6);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            color: var(--boundary-white);
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 18px 20px;
+            font-size: 1.1rem;
+            font-family: 'Barlow', sans-serif;
+            font-weight: 600;
+            background: rgba(10, 22, 18, 0.6);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            color: var(--boundary-white);
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        textarea::placeholder,
+        input[type="number"]::placeholder {
+            color: rgba(245, 245, 220, 0.4);
+        }
+
+        .helper-text {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: rgba(245, 245, 220, 0.6);
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        button {
+            width: 100%;
+            padding: 20px 50px;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.6rem;
+            letter-spacing: 3px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:active::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #c41e3a 0%, #a01729 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(196, 30, 58, 0.4);
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(196, 30, 58, 0.6);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, var(--pitch-green) 0%, #1f3a10 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(45, 80, 22, 0.4);
+        }
+
+        .btn-reset:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(45, 80, 22, 0.6);
+        }
+
+        .teams-output {
+            margin-top: 40px;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .team-card {
+            background: rgba(10, 22, 18, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 3px solid;
+            position: relative;
+            overflow: hidden;
+            animation: teamAppear 0.6s ease-out backwards;
+        }
+
+        @keyframes teamAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            opacity: 0.6;
+        }
+
+        .team-card h3 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            letter-spacing: 3px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .team-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: currentColor;
+        }
+
+        .player-list {
+            list-style: none;
+        }
+
+        .player-item {
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: rgba(245, 245, 220, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            animation: playerSlide 0.4s ease-out backwards;
+        }
+
+        @keyframes playerSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .player-item:hover {
+            background: rgba(245, 245, 220, 0.1);
+            transform: translateX(5px);
+        }
+
+        .player-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--accent-gold);
+            margin-right: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .success-banner {
+            background: rgba(255, 215, 0, 0.15);
+            border: 2px solid var(--accent-gold);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .success-banner h2 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .input-section {
+                padding: 25px;
+            }
+
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 3rem;
+            }
+
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>T20 TEAM GENERATOR</h1>
+            <p class="tagline">RANDOM • FAIR • BALANCED</p>
+        </header>
+
+        <!-- Input Form -->
+        <div id="inputSection" class="input-section">
+            <div class="input-group">
+                <label for="playerNames">1️⃣ Enter Player Names (one per line)</label>
+                <textarea id="playerNames" placeholder="Enter player names (one per line)
+
+Example:
+Virat Kohli
+MS Dhoni
+Rohit Sharma
+Jasprit Bumrah
+Ravindra Jadeja
+KL Rahul
+Hardik Pandya
+Rishabh Pant
+Mohammed Shami
+Yuzvendra Chahal
+Shubman Gill
+Ravichandran Ashwin
+Shreyas Iyer
+Mohammed Siraj
+Ishan Kishan
+Suryakumar Yadav
+Shikhar Dhawan
+Kuldeep Yadav
+Axar Patel
+Bhuvneshwar Kumar
+Umesh Yadav
+Shardul Thakur"></textarea>
+                <p class="helper-text">💡 Enter all your player names here (one per line)</p>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="numTeams">2️⃣ How Many Teams?</label>
+                    <input type="number" id="numTeams" min="2" max="10" value="2" placeholder="Number of teams">
+                    <p class="helper-text">💡 Choose 2-10 teams</p>
+                </div>
+
+                <div class="input-group">
+                    <label for="playersPerTeam">3️⃣ Players Per Team?</label>
+                    <input type="number" id="playersPerTeam" min="1" max="15" value="11" placeholder="Players per team">
+                    <p class="helper-text">💡 Standard is 11 players</p>
+                </div>
+            </div>
+
+            <button class="btn-generate" onclick="generateTeams()">⚡ Generate Random Teams</button>
+        </div>
+
+        <!-- Teams Output -->
+        <div id="teamsOutput" class="teams-output hidden"></div>
+
+        <footer>
+            <p>Made for cricket lovers worldwide 🏏 | Free & Open Source</p>
+        </footer>
+    </div>
+
+    <script>
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function generateTeams() {
+            // Get inputs
+            const playerInput = document.getElementById('playerNames').value.trim();
+            const numTeams = parseInt(document.getElementById('numTeams').value);
+            const playersPerTeam = parseInt(document.getElementById('playersPerTeam').value);
+
+            // Validate inputs
+            if (!playerInput) {
+                alert('⚠️ Please enter player names!');
+                return;
+            }
+
+            if (numTeams < 2 || numTeams > 10) {
+                alert('⚠️ Please enter between 2 and 10 teams!');
+                return;
+            }
+
+            if (playersPerTeam < 1 || playersPerTeam > 15) {
+                alert('⚠️ Please enter between 1 and 15 players per team!');
+                return;
+            }
+
+            // Parse players
+            const players = playerInput
+                .split('\n')
+                .map(p => p.trim())
+                .filter(p => p.length > 0);
+
+            if (players.length === 0) {
+                alert('⚠️ Please enter at least one player name!');
+                return;
+            }
+
+            const totalNeeded = numTeams * playersPerTeam;
+            let teams = [];
+            let repeatedPlayers = false;
+
+            if (players.length >= totalNeeded) {
+                // Enough players - just shuffle and distribute
+                const shuffled = shuffleArray(players);
+                const selectedPlayers = shuffled.slice(0, totalNeeded);
+                
+                for (let i = 0; i < numTeams; i++) {
+                    teams.push(selectedPlayers.slice(i * playersPerTeam, (i + 1) * playersPerTeam));
+                }
+            } else {
+                // Not enough players - need to repeat some players
+                repeatedPlayers = true;
+                const shuffled = shuffleArray(players);
+                
+                // Calculate how many players to repeat in each team
+                const playersToRepeat = playersPerTeam - shuffled.length;
+                
+                if (playersToRepeat > 0 && shuffled.length < 4) {
+                    alert('⚠️ You need at least 4 unique players to create teams with repetition!');
+                    return;
+                }
+
+                for (let teamIndex = 0; teamIndex < numTeams; teamIndex++) {
+                    let team = [...shuffled]; // Start with all available players
+                    
+                    if (team.length < playersPerTeam) {
+                        // Need to add more players by repeating
+                        const needed = playersPerTeam - team.length;
+                        
+                        // Create a pool of players to repeat from (shuffle for randomness)
+                        let repeatPool = shuffleArray([...shuffled]);
+                        
+                        // For each team, start from a different position to get different repeated players
+                        const startOffset = (teamIndex * 3) % shuffled.length;
+                        repeatPool = [...repeatPool.slice(startOffset), ...repeatPool.slice(0, startOffset)];
+                        
+                        // Add repeated players
+                        for (let i = 0; i < needed; i++) {
+                            team.push(repeatPool[i % repeatPool.length] + ' ⭐');
+                        }
+                    }
+                    
+                    teams.push(team.slice(0, playersPerTeam));
+                }
+            }
+
+            // Display teams
+            displayTeams(teams, players.length, totalNeeded, repeatedPlayers);
+        }
+
+        function displayTeams(teams, totalPlayers, usedPlayers, repeatedPlayers) {
+            const teamColors = ['#c41e3a', '#0047ab', '#228b22', '#ff8c00', '#9400d3', '#ff1493', '#00ced1', '#ff4500', '#32cd32', '#ff69b4'];
+            const teamNames = ['Red', 'Blue', 'Green', 'Orange', 'Purple', 'Pink', 'Cyan', 'Coral', 'Lime', 'Rose'];
+            
+            let html = `
+                <div class="success-banner">
+                    <h2>🎉 Teams Generated Successfully!</h2>
+                    <p>Total unique players: ${totalPlayers}</p>
+                    ${repeatedPlayers ? '<p style="color: var(--accent-gold); margin-top: 10px;">⭐ Some players are repeated across teams to fill all positions</p>' : ''}
+                </div>
+                <div class="teams-grid">
+            `;
+
+            teams.forEach((team, teamIndex) => {
+                const color = teamColors[teamIndex % teamColors.length];
+                const name = teamNames[teamIndex % teamNames.length];
+                
+                const playersHTML = team.map((player, playerIndex) => 
+                    `<li class="player-item" style="border-color: ${color}; animation-delay: ${playerIndex * 0.05}s;">
+                        <span class="player-number">${playerIndex + 1}</span>${player}
+                    </li>`
+                ).join('');
+
+                html += `
+                    <div class="team-card" style="border-color: ${color}; color: ${color}; animation-delay: ${teamIndex * 0.15}s;">
+                        <h3>Team ${name}</h3>
+                        <ul class="player-list">
+                            ${playersHTML}
+                        </ul>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            html += '<button class="btn-reset" onclick="resetAll()">🔄 Generate New Teams</button>';
+
+            const output = document.getElementById('teamsOutput');
+            output.innerHTML = html;
+            output.classList.remove('hidden');
+            
+            // Scroll to results
+            output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function resetAll() {
+            document.getElementById('teamsOutput').classList.add('hidden');
+            document.getElementById('inputSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>
